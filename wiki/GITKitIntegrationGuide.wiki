@@ -73,7 +73,10 @@ This is the starting status for this sample app. Next let's integrate this sampl
    2. Copy & paste the JS widget code from API console to home.jsp. (you can put them before the "{{{</head>}}}" tag in home.jsp)
    3. Remove navbar and old login box
       * Replace after "{{{<% if (user != null) { %>}}}" to "{{{<% } %>}}}"  (about line 72 - 90 after you paste widget code) with:
-      <pre><div id="navbar" style="padding: 0px 10px 5px 0px; float: right;"></div><div style="clear: both; width: 100%; border-top: 1px solid #E6E6E6;"></div></pre>
+<code language="html">
+  <div id="navbar" style="padding: 0px 10px 5px 0px; float: right;"></div>
+<div style="clear: both; width: 100%; border-top: 1px solid #E6E6E6;"></div>
+</code>
      * Replace after "{{{<% if (user == null) {%>}}}" to "{{{<<% } else {%>}}}" (line 145-157) with:
       {{{<% if (user != null) {%>}}}
    4. Save the file and refresh your home page of the browser, you should see the new account chooser login widget
