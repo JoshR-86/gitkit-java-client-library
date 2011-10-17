@@ -99,14 +99,15 @@ This is the starting status for this sample app. Next let's integrate this sampl
 ==Step 6: Integrating with GITkit client library==
 ===Step 6.1: Add dependency to GITkit client library===
    1. Open tutorial/pom.xml, add dependency to gitkit library (just remove comment):
-<pre>
-           <dependency>
-                <groupId>com.google.gitkit</groupId>
-                <artifactId>client-library</artifactId>
-                <version>1.0</version>
-                <scope>compile</scope>
-            </dependency>
-</pre>
+<code language="xml">
+<dependency>
+  <groupId>com.google.gitkit</groupId>
+  <artifactId>client-library</artifactId>
+  <version>1.0</version>
+  <scope>compile</scope>
+  </dependency>
+</code>
+
 
 ===Step 6.2: integrate with GIT client library -- implement Account interface===
    1. Add Account interface to User class (User.java):
@@ -118,21 +119,27 @@ This is the starting status for this sample app. Next let's integrate this sampl
 ===Step 6.3: Change servlets config on src\main\webapp\WEB-INF\web.xml.=== (You can delete web.xml, then rename web.ac.xml to web.xml)
    1. Delete Login servlet and servlet-mapping
    2. Add GitKit servlet
-    <pre><servlet>
-      <servlet-name>GitKit</servlet-name>
-      <servlet-class>com.google.apps.easyconnect.easyrp.client.basic.servlet.GitServlet</servlet-class>
-    </servlet></pre>
+<code language="xml">
+  <servlet>
+    <servlet-name>GitKit</servlet-name>
+      <servlet-class>com.google.apps.easyconnect.easyrp.client.basic.servlet.GitServlet
+      </servlet-class>
+    </servlet>
+</code>
    3. Add servlet mapping for the new GitkitServlet
-    <pre><servlet-mapping>
-      <servlet-name>GitKit</servlet-name>
-      <url-pattern>/gitkit</url-pattern>
-    </servlet-mapping></pre>
+<code language="xml">
+  <servlet-mapping>
+    <servlet-name>GitKit</servlet-name>
+    <url-pattern>/gitkit</url-pattern>
+  </servlet-mapping>
+</code>
    4. Add ContextLoader listener 
-    <pre><listener>
-      <listener-class>
-        com.google.apps.easyconnect.demos.easyrpbasic.web.servlet.ContextLoader
-      </listener-class>
-    </listener></pre>
+<code language="xml"><listener>
+  <listener-class>
+      com.google.apps.easyconnect.demos.easyrpbasic.web.servlet.ContextLoader
+  </listener-class>
+  </listener>
+</code>
     Restart jetty by "mvn jetty:run", federated login should now work.
 ===Step 6.4: Show logged-in user in Account Chooser===
   If you want to show the logged-in user in AC widget, copy & paste following code after "{{{$("#navbar").accountChooser();}}}" (line 65)
