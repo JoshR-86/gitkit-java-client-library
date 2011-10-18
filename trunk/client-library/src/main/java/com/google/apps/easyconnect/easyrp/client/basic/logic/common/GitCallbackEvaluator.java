@@ -182,25 +182,16 @@ public class GitCallbackEvaluator extends GitEvaluator {
    * @return the result for Verifying the IDP assertion.
    */
   public String verifyAssertion(GitCallbackRequest request) {
+    Preconditions.checkArgument(!Strings.isNullOrEmpty(request.getRequestUri()));
     String ret = "error";
     try {
-      String requestUri;
-      if (!Strings.isNullOrEmpty(request.getRequestUri())) {
-        requestUri = request.getRequestUri();
-      } else {
-        requestUri = Utils.getRequestUri(request.getHttpServletRequest());
-        request.setRequestUri(requestUri);
-      }
-
       GitServiceClient apiClient = Context.getGitServiceClient();
-      JSONObject idpAssertion = apiClient.verifyResponse(requestUri, null);
+      JSONObject idpAssertion = apiClient.verifyResponse(request.getRequestUri(), null);
       request.setIdpAssertion(idpAssertion);
       if (idpAssertion != null && idpAssertion.has("trusted")) {
         request.setIdentifier(idpAssertion.getString("email"));
         ret = idpAssertion.getBoolean("trusted") ? "trusted" : "untrusted";
       }
-    } catch (IOException e) {
-      log.severe(e.getMessage());
     } catch (JSONException e) {
       log.severe(e.getMessage());
     }
