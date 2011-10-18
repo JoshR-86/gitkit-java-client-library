@@ -15,7 +15,6 @@
 
 package com.google.apps.easyconnect.easyrp.client.basic.logic.common;
 
-import java.io.IOException;
 import java.util.logging.Logger;
 
 import org.json.JSONException;
@@ -25,7 +24,6 @@ import com.google.apps.easyconnect.easyrp.client.basic.Context;
 import com.google.apps.easyconnect.easyrp.client.basic.data.Account;
 import com.google.apps.easyconnect.easyrp.client.basic.data.AccountException;
 import com.google.apps.easyconnect.easyrp.client.basic.util.GitServiceClient;
-import com.google.apps.easyconnect.easyrp.client.basic.util.Utils;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
