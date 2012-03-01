@@ -125,7 +125,7 @@ public class GitServiceClientImplTest extends TestCase {
     JSONObject result = new JSONObject();
     input.put("result", result);
     result.put("verifiedEmail", "a@b.c");
-    result.put("profilePicture", "theProfilePicture");
+    result.put("photoUrl", "theProfilePicture");
     JSONObject output = client.convertJson(input);
     Assert.assertNotNull(output);
     Assert.assertEquals("theProfilePicture", output.getString("photoUrl"));
