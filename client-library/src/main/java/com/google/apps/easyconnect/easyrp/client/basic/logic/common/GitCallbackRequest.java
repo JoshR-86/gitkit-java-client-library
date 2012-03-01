@@ -15,10 +15,11 @@
 
 package com.google.apps.easyconnect.easyrp.client.basic.logic.common;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.json.JSONObject;
 
 /**
  * Defines the callback request object.
@@ -30,6 +31,7 @@ public class GitCallbackRequest extends GitRequest {
   private String purpose;
   private String inputEmail;
   private String requestUri;
+  private JSONObject jsonState;
 
   public GitCallbackRequest(HttpServletRequest httpServletRequest,
       HttpServletResponse httpServletResponse, String requestUri) {
@@ -72,5 +74,16 @@ public class GitCallbackRequest extends GitRequest {
 
   public void setRequestUri(String requestUri) {
     this.requestUri = requestUri;
+  }
+
+  public void setStateParameters(String state) throws JSONException {
+    jsonState = new JSONObject(state);
+  }
+
+  public String getStateParameter(String key) throws JSONException {
+    if (jsonState == null || !jsonState.has(key)) {
+      return null;
+    }
+    return jsonState.getString(key);
   }
 }

@@ -78,7 +78,16 @@ public class GitCallbackEvaluator extends GitEvaluator {
    * @return the value of the 'rp_input_email' parameter
    */
   public String checkRpInputEmail(GitCallbackRequest request) {
+    // Extract input email from URL paramter first. If failed, try to extract it from "context"
+    // returned by "verifyAssertion".
     String inputEmail = request.getHttpServletRequest().getParameter("rp_input_email");
+    if (inputEmail == null) {
+      try {
+        inputEmail = request.getStateParameter("rp_input_email");
+      } catch (JSONException e) {
+        log.severe(e.getMessage());
+      }
+    }
     request.setInputEmail(inputEmail);
     String ret = "match";
     if (!Strings.isNullOrEmpty(inputEmail)
@@ -131,11 +140,11 @@ public class GitCallbackEvaluator extends GitEvaluator {
    * @param request the request object
    * @return whether there is an account in logged in status
    */
-  public String CheckLoggedIn(GitCallbackRequest request) {
+  public String checkLoggedIn(GitCallbackRequest request) {
     Account account = Context.getSessionManager()
         .getSessionAccount(request.getHttpServletRequest());
     String ret = account == null ? "not-logged-in" : "logged-in";
-    log.info("[CheckLoggedIn] result: " + ret);
+    log.info("[checkLoggedIn] result: " + ret);
     return ret;
   }
 
@@ -151,14 +160,14 @@ public class GitCallbackEvaluator extends GitEvaluator {
    * @param request the request object
    * @return whether there is an account in logged in status
    */
-  public String CheckSessionEmailMatch(GitCallbackRequest request) {
+  public String checkSessionEmailMatch(GitCallbackRequest request) {
     Account account = Context.getSessionManager()
         .getSessionAccount(request.getHttpServletRequest());
     String ret = "mismatch";
     if (account != null && request.getIdentifier().equals(account.getEmail())) {
       ret = "match";
     }
-    log.info("[CheckSessionEmailMatch] result: " + ret);
+    log.info("[checkSessionEmailMatch] result: " + ret);
     return ret;
   }
 
@@ -186,9 +195,17 @@ public class GitCallbackEvaluator extends GitEvaluator {
       GitServiceClient apiClient = Context.getGitServiceClient();
       JSONObject idpAssertion = apiClient.verifyResponse(request.getRequestUri(), null);
       request.setIdpAssertion(idpAssertion);
-      if (idpAssertion != null && idpAssertion.has("trusted")) {
-        request.setIdentifier(idpAssertion.getString("email"));
-        ret = idpAssertion.getBoolean("trusted") ? "trusted" : "untrusted";
+      if (idpAssertion != null) {
+        if (idpAssertion.has("trusted")) {
+          request.setIdentifier(idpAssertion.getString("email"));
+          ret = idpAssertion.getBoolean("trusted") ? "trusted" : "untrusted";
+        }
+        if (idpAssertion.has("context")) {
+          String stateParameters = idpAssertion.getString("context");
+          if (!Strings.isNullOrEmpty(stateParameters)) {
+            request.setStateParameters(stateParameters);
+          }
+        }
       }
     } catch (JSONException e) {
       log.severe(e.getMessage());

@@ -156,8 +156,11 @@ public class GitServiceClientImpl implements GitServiceClient {
           ret.put("lastName", fullName.substring(index + 1).trim());
         }
       }
-      if (result.has("profilePicture")) {
-        ret.put("photoUrl", result.get("profilePicture"));
+      if (result.has("photoUrl")) {
+        ret.put("photoUrl", result.get("photoUrl"));
+      }
+      if (result.has("context")) {
+        ret.put("context", result.get("context"));
       }
     }
     return ret;
