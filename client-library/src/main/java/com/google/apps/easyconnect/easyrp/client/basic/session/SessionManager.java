@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 
 import com.google.apps.easyconnect.easyrp.client.basic.data.Account;
+import com.google.apps.easyconnect.easyrp.client.basic.data.OauthTokenResponse;
 
 /**
  * Sets/Gets data in session. RP may save session data in Server side (in memory or persistent), or
@@ -63,4 +64,23 @@ public interface SessionManager {
    */
   void setIdpAssertionData(HttpServletRequest request, HttpServletResponse response,
       JSONObject data);
+
+  /**
+   * Gets the OAuth token for the request.
+   *
+   * @param request the servlet request object.
+   * @return the {@code OauthTokenResponse} of the OAuth token.
+   */
+  OauthTokenResponse getAccountOauthToken(HttpServletRequest request);
+
+  /**
+   * Saves the OAuth token to the session. If parameter {@code data} is null, the data in the
+   * session will be cleared.
+   *
+   * @param request the servlet request object
+   * @param response the servlet response object
+   * @param data the {@code OauthTokenResponse} of the OAuth token.
+   */
+  void setAccountOauthToken(HttpServletRequest request, HttpServletResponse response,
+      OauthTokenResponse data);
 }

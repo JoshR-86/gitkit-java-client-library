@@ -23,6 +23,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.apps.easyconnect.easyrp.client.basic.data.Account;
+import com.google.apps.easyconnect.easyrp.client.basic.data.OauthTokenResponse;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
@@ -74,6 +75,29 @@ public class SessionBasedSessionManager implements SessionManager {
       session.setAttribute(config.getSessionIdpAssertionKey(), data.toString());
     } else {
       session.removeAttribute(config.getSessionIdpAssertionKey());
+    }
+  }
+
+  @Override
+  public final OauthTokenResponse getAccountOauthToken(HttpServletRequest request) {
+    String key = config.getSessionOauthTokenKey();
+    if (!Strings.isNullOrEmpty(key)) {
+      return (OauthTokenResponse) findAttributeInSession(request, key);
+    }
+    return null;
+  }
+
+  @Override
+  public void setAccountOauthToken(HttpServletRequest request, HttpServletResponse response,
+      OauthTokenResponse data) {
+    HttpSession session = request.getSession(true);
+    String key = config.getSessionOauthTokenKey();
+    if (!Strings.isNullOrEmpty(key)) {
+      if (data != null) {
+        session.setAttribute(key, data);
+      } else {
+        session.removeAttribute(key);
+      }
     }
   }
 

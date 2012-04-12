@@ -29,13 +29,16 @@ public class RpConfig {
   private static final Logger log = Logger.getLogger(RpConfig.class.getName());
   private String sessionCookieName;
   private String idpAssertionCookieName;
+  private String oauthTokenCookieName;
   private int maxAgeOfSession;
   private int maxAgeOfIdpAssertion;
+  private int maxAgeOfOauthToken;
   private String domain;
   private String path;
 
   private String sessionUserKey;
   private String sessionIdpAssertionKey;
+  private String sessionOauthTokenKey;
 
   private String notificationKey;
 
@@ -57,6 +60,7 @@ public class RpConfig {
   private void loadFromProperties(Properties properties) {
     this.sessionCookieName = properties.getProperty("RP.Config.sessionCookieName");
     this.idpAssertionCookieName = properties.getProperty("RP.Config.idpAssertionCookieName");
+    this.oauthTokenCookieName = properties.getProperty("RP.Config.oauthTokenCookieName");
     String str = properties.getProperty("RP.Config.maxAgeOfSession");
     if (!Strings.isNullOrEmpty(str)) {
       try {
@@ -73,10 +77,19 @@ public class RpConfig {
         log.severe("Failed to parse maxAgeOfIdpAssertion: " + e.getMessage());
       }
     }
+    str  = properties.getProperty("RP.Config.maxAgeOfOauthToken");
+    if (!Strings.isNullOrEmpty(str)) {
+      try {
+        this.maxAgeOfOauthToken = Integer.parseInt(str);
+      } catch (NumberFormatException e) {
+        log.severe("Failed to parse maxAgeOfOauthToken: " + e.getMessage());
+      }
+    }
     this.domain = properties.getProperty("RP.Config.domain");
     this.path = properties.getProperty("RP.Config.path");
     this.sessionUserKey = properties.getProperty("RP.Config.sessionUserKey");
     this.sessionIdpAssertionKey = properties.getProperty("RP.Config.sessionIdpAssertionKey");
+    this.sessionOauthTokenKey = properties.getProperty("RP.Config.sessionOauthTokenKey");
     this.notificationKey = properties.getProperty("RP.Config.notificationKey");
     this.siteUrl = properties.getProperty("RP.Config.siteUrl");
     this.homeUrl = properties.getProperty("RP.Config.homeUrl");
@@ -92,12 +105,20 @@ public class RpConfig {
     return idpAssertionCookieName;
   }
 
+  public String getOauthTokenCookieName() {
+    return oauthTokenCookieName;
+  }
+
   public int getMaxAgeOfSession() {
     return maxAgeOfSession;
   }
 
   public int getMaxAgeOfIdpAssertion() {
     return maxAgeOfIdpAssertion;
+  }
+
+  public int getMaxAgeOfOauthToken() {
+    return maxAgeOfOauthToken;
   }
 
   public String getDomain() {
@@ -114,6 +135,10 @@ public class RpConfig {
 
   public String getSessionIdpAssertionKey() {
     return sessionIdpAssertionKey;
+  }
+
+  public String getSessionOauthTokenKey() {
+    return sessionOauthTokenKey;
   }
 
   public String getNotificationKey() {
@@ -144,13 +169,16 @@ public class RpConfig {
   public static class Builder {
     private String sessionCookieName;
     private String idpAssertionCookieName;
+    private String oauthTokenCookieName;
     private int maxAgeOfSession;
     private int maxAgeOfIdpAssertion;
+    private int maxAgeOfOauthToken;
     private String domain;
     private String path;
 
     private String sessionUserKey;
     private String sessionIdpAssertionKey;
+    private String sessionOauthTokenKey;
 
     private String notificationKey;
 
@@ -170,6 +198,11 @@ public class RpConfig {
       return this;
     }
 
+    public Builder oauthTokenCookieName(String val) {
+      this.oauthTokenCookieName = val;
+      return this;
+    }
+
     public Builder maxAgeOfSession(int val) {
       this.maxAgeOfSession = val;
       return this;
@@ -177,6 +210,11 @@ public class RpConfig {
 
     public Builder maxAgeOfIdpAssertion(int val) {
       this.maxAgeOfIdpAssertion = val;
+      return this;
+    }
+
+    public Builder maxAgeOfOauthToken(int val) {
+      this.maxAgeOfOauthToken = val;
       return this;
     }
 
@@ -197,6 +235,11 @@ public class RpConfig {
 
     public Builder sessionIdpAssertionKey(String val) {
       this.sessionIdpAssertionKey = val;
+      return this;
+    }
+
+    public Builder sessionOauthTokenKey(String val) {
+      this.sessionOauthTokenKey = val;
       return this;
     }
 
@@ -230,12 +273,15 @@ public class RpConfig {
       RpConfig config = new RpConfig();
       config.sessionCookieName = this.sessionCookieName;
       config.idpAssertionCookieName = this.idpAssertionCookieName;
+      config.oauthTokenCookieName = this.oauthTokenCookieName;
       config.maxAgeOfSession = this.maxAgeOfSession;
       config.maxAgeOfIdpAssertion = this.maxAgeOfIdpAssertion;
+      config.maxAgeOfOauthToken = this.maxAgeOfOauthToken;
       config.domain = this.domain;
       config.path = this.path;
       config.sessionUserKey = this.sessionUserKey;
       config.sessionIdpAssertionKey = this.sessionIdpAssertionKey;
+      config.sessionOauthTokenKey = this.sessionOauthTokenKey;
       config.notificationKey = this.notificationKey;
       config.siteUrl = this.siteUrl;
       config.homeUrl = this.homeUrl;
