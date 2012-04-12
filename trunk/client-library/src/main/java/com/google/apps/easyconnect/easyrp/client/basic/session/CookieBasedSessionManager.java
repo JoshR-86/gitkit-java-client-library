@@ -23,6 +23,7 @@ import org.json.JSONObject;
 
 import com.google.apps.easyconnect.easyrp.client.basic.data.Account;
 import com.google.apps.easyconnect.easyrp.client.basic.data.AccountService;
+import com.google.apps.easyconnect.easyrp.client.basic.data.OauthTokenResponse;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
@@ -84,6 +85,7 @@ public class CookieBasedSessionManager implements SessionManager {
     return null;
   }
 
+  @Override
   public void setIdpAssertionData(HttpServletRequest request, HttpServletResponse response,
       JSONObject data) {
     String token = null;
@@ -93,6 +95,39 @@ public class CookieBasedSessionManager implements SessionManager {
     Cookie cookie = new Cookie(config.getIdpAssertionCookieName(), token);
     if (config.getMaxAgeOfIdpAssertion() > 0) {
       cookie.setMaxAge(config.getMaxAgeOfIdpAssertion());
+    }
+    if (!Strings.isNullOrEmpty(config.getDomain())) {
+      cookie.setDomain(config.getDomain());
+    }
+    if (!Strings.isNullOrEmpty(config.getPath())) {
+      cookie.setPath(config.getPath());
+    }
+    response.addCookie(cookie);
+  }
+
+  @Override
+  public OauthTokenResponse getAccountOauthToken(HttpServletRequest request) {
+    String cookieName = config.getOauthTokenCookieName();
+    if (!Strings.isNullOrEmpty(cookieName)) {
+      Cookie cookie = findCookieByName(request, cookieName);
+      if (cookie != null) {
+        return tokenGenerator.verifyOauthToken(cookie.getValue());
+      }
+    }
+    return null;
+  }
+
+  @Override
+  public void setAccountOauthToken(HttpServletRequest request, HttpServletResponse response,
+      OauthTokenResponse data) {
+    String cookieName = config.getOauthTokenCookieName();
+    if (Strings.isNullOrEmpty(cookieName)) {
+      return;
+    }
+    String token = data == null ? null : tokenGenerator.generateOauthToken(data);
+    Cookie cookie = new Cookie(cookieName, token);
+    if (config.getMaxAgeOfOauthToken() > 0) {
+      cookie.setMaxAge(config.getMaxAgeOfOauthToken());
     }
     if (!Strings.isNullOrEmpty(config.getDomain())) {
       cookie.setDomain(config.getDomain());

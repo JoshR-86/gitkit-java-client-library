@@ -64,6 +64,7 @@ public class GitServiceClientImpl implements GitServiceClient {
       request.put("params", params);
       params.put("requestUri", requestUri);
       params.put("postBody", postBody);
+      params.put("returnOauthToken", true);
 
     } catch (JSONException e) {
       log.severe(e.getMessage());
@@ -161,6 +162,18 @@ public class GitServiceClientImpl implements GitServiceClient {
       }
       if (result.has("context")) {
         ret.put("context", result.get("context"));
+      }
+      if (result.has("oauthAccessToken")) {
+        ret.put("oauthAccessToken", result.get("oauthAccessToken"));
+      }
+      if (result.has("oauthExpireIn")) {
+        ret.put("oauthExpireIn", result.get("oauthExpireIn"));
+      }
+      if (result.has("oauthRefreshToken")) {
+        ret.put("oauthRefreshToken", result.getInt("oauthRefreshToken"));
+      }
+      if (result.has("oauthRequestToken")) {
+        ret.put("oauthRequestToken", result.get("oauthRequestToken"));
       }
     }
     return ret;

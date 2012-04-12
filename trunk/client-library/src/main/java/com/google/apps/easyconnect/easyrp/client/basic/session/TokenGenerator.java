@@ -15,6 +15,8 @@
 
 package com.google.apps.easyconnect.easyrp.client.basic.session;
 
+import com.google.apps.easyconnect.easyrp.client.basic.data.OauthTokenResponse;
+
 import org.json.JSONObject;
 
 /**
@@ -51,4 +53,18 @@ public interface TokenGenerator {
    * @return the IDP assertion if valid, null otherwise
    */
   JSONObject verifyIdpAssertionToken(String token);
+
+  /**
+   * Creates the cookie value to save the OAuth token.
+   * @param data the OAuth token
+   * @return the cookie value created
+   */
+  String generateOauthToken(OauthTokenResponse data);
+
+  /**
+   * Verifies the cookie value is valid. If valid, return the OAuth token.
+   * @param data the cookie value to be verified.
+   * @return the OAuth token if valid, null otherwise
+   */
+  OauthTokenResponse verifyOauthToken(String data);
 }

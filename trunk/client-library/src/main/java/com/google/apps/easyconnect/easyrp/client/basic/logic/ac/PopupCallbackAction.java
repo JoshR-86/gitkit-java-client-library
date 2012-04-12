@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 import com.google.apps.easyconnect.easyrp.client.basic.Context;
 import com.google.apps.easyconnect.easyrp.client.basic.data.Account;
 import com.google.apps.easyconnect.easyrp.client.basic.data.AccountException;
+import com.google.apps.easyconnect.easyrp.client.basic.data.OauthTokenResponse;
 import com.google.apps.easyconnect.easyrp.client.basic.logic.common.GitCallbackRequest;
 import com.google.apps.easyconnect.easyrp.client.basic.servlet.ContentType;
 import com.google.common.base.Preconditions;
@@ -125,6 +126,9 @@ public class PopupCallbackAction {
     log.info("CallbackAction response: set user logged in.");
     Context.getSessionManager().setSessionAccount(request.getHttpServletRequest(),
         request.getHttpServletResponse(), request.getAccountInDB());
+    Context.getSessionManager().setAccountOauthToken(request.getHttpServletRequest(),
+        request.getHttpServletResponse(),
+        OauthTokenResponse.createFromAssertion(request.getIdpAssertion()));
   }
 
   /**
