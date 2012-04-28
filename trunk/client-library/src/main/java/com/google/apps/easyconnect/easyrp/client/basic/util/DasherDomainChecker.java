@@ -15,13 +15,13 @@
 
 package com.google.apps.easyconnect.easyrp.client.basic.util;
 
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.cache.Cache;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Map;
 import java.util.logging.Logger;
-
-import com.google.common.annotations.VisibleForTesting;
 
 /**
  * Utility class to check whether is a domain is a dasher domain.
@@ -33,13 +33,13 @@ public class DasherDomainChecker {
       + "o8/site-xrds?hd=";
   private static final String XRDS_MIME_TYPE = "application/xrds+xml";
 
-  private Map<String, Boolean> cache;
+  private Cache<String, Boolean> cache;
 
   /**
    * Construct a checker instance.
    * @param cache a cache for domain/isDasher mapping. Use {@code null} if don't want to use cache.
    */
-  public DasherDomainChecker(Map<String, Boolean> cache) {
+  public DasherDomainChecker(Cache<String, Boolean> cache) {
     this.cache = cache;
   }
 
@@ -56,9 +56,10 @@ public class DasherDomainChecker {
     logger.entering("Utils", "isDasherDomain", domain);
     boolean isDasherDomain = false;
     try {
-      if (cache != null && cache.containsKey(domain)) {
+      Boolean result = cache == null ? null : cache.getIfPresent(domain);
+      if (result != null) {
         logger.fine("found domain [" + domain + "] in cache.");
-        isDasherDomain = (Boolean) cache.get(domain);
+        isDasherDomain = result;
       } else {
         isDasherDomain = checkDasherDomain(domain);
         if (cache != null) {

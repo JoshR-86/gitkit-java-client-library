@@ -61,7 +61,7 @@ public class PopupCallbackAction {
    */
   public void sendInvalidAssertion(GitCallbackRequest request) throws IOException {
     log.info("CallbackAction response: sendInvalidAssertion.");
-    send(request, builder.createInvalidAssertion());
+    send(request, builder.createInvalidAssertion(Context.isEnableCds()));
   }
 
   /**
@@ -72,7 +72,7 @@ public class PopupCallbackAction {
    */
   public void sendInvalidAssertionEmail(GitCallbackRequest request) throws IOException {
     log.info("CallbackAction response: sendInvalidAssertionEmail.");
-    send(request, builder.createInvalidAssertionEmail());
+    send(request, builder.createInvalidAssertionEmail(Context.isEnableCds()));
   }
 
   /**
@@ -84,7 +84,8 @@ public class PopupCallbackAction {
   public void sendAccountMismatch(GitCallbackRequest request) throws IOException {
     log.info("CallbackAction response: sendAccountMismatch.");
     send(request,
-        builder.createAccountMismatch(request.getIdentifier(), request.getIdentifier(), null));
+        builder.createAccountMismatch(request.getIdentifier(), request.getIdentifier(), null,
+            Context.isEnableCds()));
   }
 
   /**
@@ -100,7 +101,8 @@ public class PopupCallbackAction {
       displayName = request.getAccountInDB().getDisplayName();
       photoUrl = request.getAccountInDB().getPhotoUrl();
     }
-    send(request, builder.createSuccess(true, request.getIdentifier(), displayName, photoUrl));
+    send(request, builder.createSuccess(true, request.getIdentifier(), displayName, photoUrl,
+        Context.isEnableCds()));
   }
 
   /**
@@ -111,7 +113,8 @@ public class PopupCallbackAction {
    */
   public void sendOKUnregistered(GitCallbackRequest request) throws IOException {
     log.info("CallbackAction response: sendOKUnregistered.");
-    send(request, builder.createSuccess(false, request.getIdentifier(), null, null));
+    send(request, builder.createSuccess(false, request.getIdentifier(), null, null,
+        Context.isEnableCds()));
   }
 
   /**

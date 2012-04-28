@@ -15,15 +15,15 @@
 
 package com.google.apps.easyconnect.easyrp.client.basic.util;
 
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 import junit.framework.TestCase;
 
-import com.google.common.collect.MapMaker;
+import java.util.concurrent.TimeUnit;
 
 public class DasherDomainCheckerTest extends TestCase {
-  private Map<String, Boolean> cache;
+  private Cache<String, Boolean> cache;
   private DasherDomainChecker checker;
 
   protected void tearDown() throws Exception {
@@ -31,7 +31,7 @@ public class DasherDomainCheckerTest extends TestCase {
   }
 
   private void initCacheModule() {
-    cache = new MapMaker().expireAfterWrite(5, TimeUnit.MINUTES).maximumSize(10).makeMap();
+    cache = CacheBuilder.newBuilder().expireAfterWrite(5, TimeUnit.MINUTES).maximumSize(10).build();
     checker = new DasherDomainChecker(cache);
   }
 

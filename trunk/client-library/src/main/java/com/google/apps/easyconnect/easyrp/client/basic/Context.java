@@ -15,9 +15,6 @@
 
 package com.google.apps.easyconnect.easyrp.client.basic;
 
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
 import com.google.apps.easyconnect.easyrp.client.basic.data.AccountService;
 import com.google.apps.easyconnect.easyrp.client.basic.session.RpConfig;
 import com.google.apps.easyconnect.easyrp.client.basic.session.SessionManager;
@@ -27,7 +24,10 @@ import com.google.apps.easyconnect.easyrp.client.basic.util.GitServiceClientImpl
 import com.google.apps.easyconnect.easyrp.client.basic.util.IdpWhiteList;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.common.collect.MapMaker;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * A services locator for RP's account & session services. Also holds some configuration parameters.
@@ -43,10 +43,11 @@ public class Context {
   private static IdpWhiteList idpWhiteList;
   private static boolean useLocalIdpWhiteList;
   private static boolean returnProfileInfo;
+  private static boolean enableCds;
 
   static {
-    Map<String, Boolean> cache = new MapMaker().expireAfterWrite(5, TimeUnit.MINUTES)
-        .maximumSize(10000).makeMap();
+    Cache<String, Boolean> cache = CacheBuilder.newBuilder().expireAfterWrite(5, TimeUnit.MINUTES)
+        .maximumSize(10000).build();
     dasherDomainChecker = new DasherDomainChecker(cache);
     String apiKey = "AIzaSyCWBH-lgC22VCbdcGo95L2qE4FccWQ1VPs";
     gitServiceClient = new GitServiceClientImpl(apiKey);
@@ -75,6 +76,14 @@ public class Context {
 
   public static void setReturnProfileInfo(boolean returnProfileInfo) {
     Context.returnProfileInfo = returnProfileInfo;
+  }
+
+  public static boolean isEnableCds() {
+    return enableCds;
+  }
+
+  public static void setEnableCds(boolean enableCds) {
+    Context.enableCds = enableCds;
   }
 
   public static void setConfig(RpConfig config) {
