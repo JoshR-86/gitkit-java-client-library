@@ -27,6 +27,7 @@ import com.google.apps.easyconnect.easyrp.client.basic.data.Account;
 import com.google.apps.easyconnect.easyrp.client.basic.data.AccountException;
 import com.google.apps.easyconnect.easyrp.client.basic.data.OauthTokenResponse;
 import com.google.apps.easyconnect.easyrp.client.basic.logic.common.GitCallbackRequest;
+import com.google.apps.easyconnect.easyrp.client.basic.session.CdsAction;
 import com.google.common.base.Preconditions;
 
 /**
@@ -59,6 +60,15 @@ public class RedirectCallbackAction {
           data.toString());
     }
     request.getHttpServletRequest().getRequestDispatcher(Context.getConfig().getLoginUrl())
+        .forward(request.getHttpServletRequest(), request.getHttpServletResponse());
+  }
+
+  private void showHomePage(GitCallbackRequest request, CdsAction action)
+      throws IOException, ServletException {
+    if (action != null) {
+      request.getHttpServletRequest().setAttribute(Context.getConfig().getCdsActionKey(), action);
+    }
+    request.getHttpServletRequest().getRequestDispatcher(Context.getConfig().getHomeUrl())
         .forward(request.getHttpServletRequest(), request.getHttpServletResponse());
   }
 
@@ -102,9 +112,13 @@ public class RedirectCallbackAction {
    * @param request the login request object
    * @throws IOException if error occurs when send back response
    */
-  public void sendOKRegistered(GitCallbackRequest request) throws IOException {
+  public void sendOKRegistered(GitCallbackRequest request) throws IOException, ServletException {
     log.info("CallbackAction response: sendOKRegistered.");
-    request.getHttpServletResponse().sendRedirect(Context.getConfig().getHomeUrl());
+    if (Context.isEnableCds()) {
+      showHomePage(request, CdsAction.STORE);
+    } else {
+      request.getHttpServletResponse().sendRedirect(Context.getConfig().getHomeUrl());
+    }
   }
 
   /**

@@ -34,12 +34,12 @@ public class PopupCallbackResponseBuilder {
       + " src='https://ajax.googleapis.com/jsapi'></script>\n" + "<script type='text/javascript'>"
       + "  google.load(\"identitytoolkit\", \"1.0\", {packages: [\"notify\"]});\n" + "</script>\n"
       + "<script type='text/javascript'>\n"
-      + "  window.google.identitytoolkit.notifyFederatedSuccess(%1$s);\n" + "</script>";
+      + "  window.google.identitytoolkit.notifyFederatedSuccess(%1$s, %2$s);\n" + "</script>";
   private final String HTML_ERROR = "<script type=text/javascript"
       + " src='https://ajax.googleapis.com/jsapi'></script>\n" + "<script type='text/javascript'>"
       + "  google.load(\"identitytoolkit\", \"1.0\", {packages: [\"notify\"]});\n" + "</script>\n"
       + "<script type='text/javascript'>\n"
-      + "  window.google.identitytoolkit.notifyFederatedError(%1$s, %2$s);\n" + "</script>";
+      + "  window.google.identitytoolkit.notifyFederatedError(%1$s, %2$s, %3$s);\n" + "</script>";
 
   /**
    * Create HTML response code for successful federate login.
@@ -49,12 +49,14 @@ public class PopupCallbackResponseBuilder {
    *        account chooser will be updated.
    * @param photoUrl the photo URL of the user. If you set a value here, the entry value in account
    *        chooser will be updated.
+   * @param keepPopup whether to keep the pop-up window or not.
    * @return the HTML code to return to the pop-up page
    */
   public String createSuccess(boolean registered, String email, String displayName,
-      String photoUrl) {
+      String photoUrl, boolean keepPopup) {
     Preconditions.checkArgument(!Strings.isNullOrEmpty(email));
     JSONObject result = new JSONObject();
+    JSONObject options = new JSONObject();
     try {
       result.put("email", email);
       result.put("registered", registered);
@@ -64,10 +66,11 @@ public class PopupCallbackResponseBuilder {
       if (!Strings.isNullOrEmpty(photoUrl)) {
         result.put("photoUrl", photoUrl);
       }
+      options.put("keepPopup", keepPopup);
     } catch (JSONException e) {
       log.severe(e.getMessage());
     }
-    String html = String.format(HTML_SUCCESS, result.toString());
+    String html = String.format(HTML_SUCCESS, result.toString(), options.toString());
     return html;
   }
 
@@ -76,57 +79,71 @@ public class PopupCallbackResponseBuilder {
    * @param validatedEmail the email returned from IDP
    * @param inputEmail the email user input
    * @param purpose the 'rp_purpose' parameter value set by widget
+   * @param keepPopup whether to keep the pop-up window or not.
    * @return the HTML code to return to the pop-up page
    */
-  public String createAccountMismatch(String validatedEmail, String inputEmail, String purpose) {
+  public String createAccountMismatch(String validatedEmail, String inputEmail, String purpose,
+      boolean keepPopup) {
     Preconditions.checkArgument(!Strings.isNullOrEmpty(validatedEmail));
     Preconditions.checkArgument(!Strings.isNullOrEmpty(inputEmail));
     JSONObject result = new JSONObject();
+    JSONObject options = new JSONObject();
     try {
       result.put("validatedEmail", validatedEmail);
       result.put("inputEmail", inputEmail);
       if (!Strings.isNullOrEmpty(purpose)) {
         result.put("purpose", purpose);
       }
+      options.put("keepPopup", keepPopup);
     } catch (JSONException e) {
       log.severe(e.getMessage());
     }
-    String html = String.format(HTML_ERROR, "'accountMismatch'", result.toString());
+    String html = String.format(HTML_ERROR, "'accountMismatch'", result.toString(),
+        options.toString());
     return html;
   }
 
   /**
    * Creates the response HTML code for invalid assertion error.
+   * @param keepPopup whether to keep the pop-up window or not.
    * @return the HTML code to return to the pop-up page
    */
-  public String createInvalidAssertion() {
-    return createError("invalidAssertion");
+  public String createInvalidAssertion(boolean keepPopup) {
+    return createError("invalidAssertion", keepPopup);
   }
 
   /**
    * Creates the response HTML code if the IDP is not the email's Email provider.
+   * @param keepPopup whether to keep the pop-up window or not.
    * @return the HTML code to return to the pop-up page
    */
-  public String createInvalidAssertionEmail() {
-    return createError("invalidAssertionEmail");
+  public String createInvalidAssertionEmail(boolean keepPopup) {
+    return createError("invalidAssertionEmail", keepPopup);
   }
 
   /**
    * Creates the response HTML code for unknown error.
+   * @param keepPopup whether to keep the pop-up window or not.
    * @return the HTML code to return to the pop-up page
    */
-  public String createUnknowError() {
-    return createError(null);
+  public String createUnknowError(boolean keepPopup) {
+    return createError(null, keepPopup);
   }
 
-  private String createError(String errorType) {
+  private String createError(String errorType, boolean keepPopup) {
     String strType;
     if (Strings.isNullOrEmpty(errorType)) {
       strType = "undefined";
     } else {
       strType = "'" + errorType + "'";
     }
-    String html = String.format(HTML_ERROR, strType, "{}");
+    JSONObject options = new JSONObject();
+    try {
+      options.put("keepPopup", keepPopup);
+    } catch (JSONException e) {
+      log.severe(e.getMessage());
+    }
+    String html = String.format(HTML_ERROR, strType, "{}", options.toString());
     return html;
   }
 }

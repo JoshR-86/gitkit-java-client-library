@@ -41,6 +41,7 @@ public class RpConfig {
   private String sessionOauthTokenKey;
 
   private String notificationKey;
+  private String cdsActionKey;
 
   @Deprecated
   private String siteUrl;
@@ -91,6 +92,7 @@ public class RpConfig {
     this.sessionIdpAssertionKey = properties.getProperty("RP.Config.sessionIdpAssertionKey");
     this.sessionOauthTokenKey = properties.getProperty("RP.Config.sessionOauthTokenKey");
     this.notificationKey = properties.getProperty("RP.Config.notificationKey");
+    this.cdsActionKey = properties.getProperty("RP.Config.cdsActionKey");
     this.siteUrl = properties.getProperty("RP.Config.siteUrl");
     this.homeUrl = properties.getProperty("RP.Config.homeUrl");
     this.loginUrl = properties.getProperty("RP.Config.loginUrl");
@@ -145,6 +147,10 @@ public class RpConfig {
     return notificationKey;
   }
 
+  public String getCdsActionKey() {
+    return cdsActionKey;
+  }
+
   @Deprecated
   public String getSiteUrl() {
     return siteUrl;
@@ -167,6 +173,7 @@ public class RpConfig {
    * @author guibinkong@google.com (Guibin Kong)
    */
   public static class Builder {
+    private static final String DEFAULT_CDS_ACTION_KEY = "CdsAction";
     private String sessionCookieName;
     private String idpAssertionCookieName;
     private String oauthTokenCookieName;
@@ -181,6 +188,7 @@ public class RpConfig {
     private String sessionOauthTokenKey;
 
     private String notificationKey;
+    private String cdsActionKey;
 
     @Deprecated
     private String siteUrl;
@@ -248,6 +256,11 @@ public class RpConfig {
       return this;
     }
 
+    public Builder cdsActionKey(String val) {
+      this.cdsActionKey = val;
+      return this;
+    }
+
     @Deprecated
     public Builder siteUrl(String val) {
       this.siteUrl = val;
@@ -283,6 +296,8 @@ public class RpConfig {
       config.sessionIdpAssertionKey = this.sessionIdpAssertionKey;
       config.sessionOauthTokenKey = this.sessionOauthTokenKey;
       config.notificationKey = this.notificationKey;
+      config.cdsActionKey = Strings.isNullOrEmpty(this.cdsActionKey)
+          ? DEFAULT_CDS_ACTION_KEY : this.cdsActionKey;
       config.siteUrl = this.siteUrl;
       config.homeUrl = this.homeUrl;
       config.loginUrl = this.loginUrl;
